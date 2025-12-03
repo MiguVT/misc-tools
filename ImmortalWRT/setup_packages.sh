@@ -3,9 +3,7 @@ set -e
 
 echo "===> OpenWrt/ImmortalWrt BPI-R4 package setup"
 
-# -------------------------------
 # 1. Package groups (readable)
-# -------------------------------
 CORE_PKGS="
 autocore
 base-files
@@ -58,7 +56,6 @@ ppp-mod-pppoe
 wpad-openssl
 iperf3
 ethtool-full
-libustream-openssl
 "
 
 LUCI_PKGS="
@@ -87,7 +84,6 @@ pbr
 luci-app-pbr
 "
 
-# Merge all groups into a single list
 PACKAGES="
 $CORE_PKGS
 $KERNEL_MODS
@@ -97,18 +93,14 @@ $TOOLS_PKGS
 $ROUTING_PKGS
 "
 
-# -------------------------------
-# 2. Sanity checks
-# -------------------------------
+# 2. Sanity check
 if [ ! -f .config ]; then
   echo "ERROR: .config not found."
   echo "Run 'make menuconfig' first and select the Banana Pi BPI-R4 target."
   exit 1
 fi
 
-# -------------------------------
 # 3. Apply package selection
-# -------------------------------
 echo "===> [1/3] Removing previous CONFIG_PACKAGE_ entries"
 sed -i '/^CONFIG_PACKAGE_/d' .config
 
@@ -119,10 +111,8 @@ for PKG in $PACKAGES; do
 done
 
 echo "===> [3/3] Cleaning up unwanted defaults"
-# Explicitly disable ImmortalWrt CN defaults if present
 echo "CONFIG_PACKAGE_default-settings-chn=n" >> .config
 echo "CONFIG_LUCI_LANG_zh_Hans=n" >> .config
-# Keep LuCI in English only
 echo "CONFIG_LUCI_LANG_en=y" >> .config
 
 echo "===> Running 'make defconfig' to resolve dependencies"
