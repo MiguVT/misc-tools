@@ -1,124 +1,50 @@
 #!/bin/bash
 set -e
 
-echo "===> OpenWrt/ImmortalWrt BPI-R4 package setup"
+echo "===> BPI-R4 package KISS setup (based on default profile)"
 
-# 1. Package groups (readable)
-CORE_PKGS="
-autocore
-base-files
-block-mount
-bridger
-ca-bundle
-dnsmasq-full
-dropbear
-firewall4
-fitblk
-fstools
-libc
-libgcc
-logd
-mtd
-netifd
-nftables
-opkg
-procd-ujail
-uci
-uclient-fetch
-urandom-seed
-urngd
-"
-
-KERNEL_MODS="
-kmod-crypto-hw-safexcel
-kmod-gpio-button-hotplug
-kmod-leds-gpio
-kmod-nf-nathelper
-kmod-nf-nathelper-extra
-kmod-nft-offload
-kmod-phy-aquantia
-kmod-hwmon-pwmfan
-kmod-i2c-mux-pca954x
-kmod-eeprom-at24
-kmod-mt7996-firmware
-kmod-mt7996-233-firmware
-kmod-rtc-pcf8563
-kmod-sfp
-kmod-usb3
-mt7988-wo-firmware
-"
-
-NETWORK_PKGS="
-odhcp6c
-odhcpd-ipv6only
-ppp
-ppp-mod-pppoe
-wpad-openssl
-iperf3
-ethtool-full
-"
-
-LUCI_PKGS="
-luci-app-package-manager
-luci-lib-base
-luci-lib-ipkg
-luci
-luci-ssl
-luci-app-ttyd
+# Extra packages to ensure are enabled
+EXTRA_PKGS="
+btop
 luci-app-statistics
 collectd-mod-thermal
-luci-proto-wireguard
-wireguard-tools
-"
-
-TOOLS_PKGS="
-btop
-uboot-envtools
-e2fsprogs
-f2fsck
-mkf2fs
-"
-
-ROUTING_PKGS="
+iperf3
+ethtool-full
 pbr
 luci-app-pbr
 "
 
-PACKAGES="
-$CORE_PKGS
-$KERNEL_MODS
-$NETWORK_PKGS
-$LUCI_PKGS
-$TOOLS_PKGS
-$ROUTING_PKGS
-"
-
-# 2. Sanity check
 if [ ! -f .config ]; then
   echo "ERROR: .config not found."
-  echo "Run 'make menuconfig' first and select the Banana Pi BPI-R4 target."
+  echo "Run 'make menuconfig' first and select the Banana Pi BPI-R4 target/profile."
   exit 1
 fi
 
-# 3. Apply package selection
-echo "===> [1/3] Removing previous CONFIG_PACKAGE_ entries"
-sed -i '/^CONFIG_PACKAGE_/d' .config
+echo "===> [1/4] Disable CN default settings if present"
+# Optional: comment this out if you want to keep them
+sed -i '/CONFIG_PACKAGE_default-settings-chn/d' .config
+echo "CONFIG_PACKAGE_default-settings-chn=n" >> .config
 
-echo "===> [2/3] Injecting requested packages"
-for PKG in $PACKAGES; do
-  [ -n "$PKG" ] || continue
+echo "===> [2/4] Replace luci-light with full luci"
+# Remove any existing luci/light flags
+sed -i '/CONFIG_PACKAGE_luci-light/d' .config
+sed -i '/CONFIG_PACKAGE_luci=/d' .config
+# Force full LuCI instead of luci-light
+echo "CONFIG_PACKAGE_luci=y" >> .config
+
+echo "===> [3/4] Ensure extra tools and apps are enabled"
+for PKG in $EXTRA_PKGS; do
+  sed -i "/CONFIG_PACKAGE_${PKG}=/d" .config
   echo "CONFIG_PACKAGE_${PKG}=y" >> .config
 done
 
-echo "===> [3/3] Cleaning up unwanted defaults"
-echo "CONFIG_PACKAGE_default-settings-chn=n" >> .config
-echo "CONFIG_LUCI_LANG_zh_Hans=n" >> .config
+echo "===> [4/4] Keep LuCI English only"
+sed -i '/CONFIG_LUCI_LANG_/d' .config
 echo "CONFIG_LUCI_LANG_en=y" >> .config
 
-echo "===> Running 'make defconfig' to resolve dependencies"
+echo "===> Running 'make defconfig' to normalize config"
 make defconfig
 
-echo "✅ setup_build.sh finished."
-echo "Next steps:"
-echo "  make download"
-echo "  make -j\$(nproc) V=s"
+echo "✅ Done. Now run:"
+echo "   make download"
+echo "   make -j\$(nproc) V=s"
