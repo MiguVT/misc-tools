@@ -39,13 +39,18 @@ luci-app-commands
 kmod-usb-storage
 kmod-usb-net
 usb-modeswitch
+luci-app-attendedsysupgrade
 "
 
 [ ! -f .config ] && echo "ERROR: .config not found" && exit 1
 
-# Disable default-settings-chn
-sed -i '/CONFIG_PACKAGE_default-settings/d' .config
-echo "# CONFIG_PACKAGE_default-settings-chn is not set" >> .config
+# Set defaults
+sed -i '/CONFIG_DEFAULT_default-settings/d' .config
+echo "CONFIG_DEFAULT_default-settings=y" >> .config
+
+# Disable CN defaults
+sed -i '/CONFIG_DEFAULT_default-settings-chn/d' .config
+echo "# CONFIG_DEFAULT_default-settings-chn is not set" >> .config
 
 # Full LuCI
 sed -i '/CONFIG_PACKAGE_luci-light/d' .config
