@@ -1,3 +1,5 @@
+> ⚠️ DEPRECATED: I moved to Snapshot OpenWRT (More stability, full open-source)
+
 # ImmortalWrt BPI‑R4 Build
 
 This is how I build a custom ImmortalWrt image for the Banana Pi BPI‑R4 on Arch/CachyOS.
