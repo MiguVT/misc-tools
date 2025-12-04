@@ -43,6 +43,10 @@ usb-modeswitch
 
 [ ! -f .config ] && echo "ERROR: .config not found" && exit 1
 
+# Disable default-settings-chn
+sed -i '/CONFIG_PACKAGE_default-settings/d' .config
+echo "# CONFIG_PACKAGE_default-settings-chn is not set" >> .config
+
 # Full LuCI
 sed -i '/CONFIG_PACKAGE_luci-light/d' .config
 sed -i '/CONFIG_PACKAGE_luci=/d' .config
