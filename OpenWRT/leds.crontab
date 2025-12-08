@@ -1,0 +1,8 @@
+# OPENWRT Crontab LED Schedule
+# This crontab manages LED behavior on OpenWrt, turning them OFF at night and restoring defaults in the morning.
+
+# Turn off all LEDs at 11:30 PM
+30 23 * * * for led in /sys/class/leds/*/brightness; do echo 0 > "$led"; done
+
+# Restore default LED settings at 7:00 AM
+00 07 * * * /etc/init.d/led restart
