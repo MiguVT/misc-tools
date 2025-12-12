@@ -72,17 +72,17 @@
   --code-font: Consolas, 'gg mono', 'Liberation Mono', Menlo, Courier, monospace; /* font for codeblocks (font must be installed) [default: Consolas, Liberation Mono, Menlo, Courier, monospace] */
   /* CHANNEL COLORS */
   --channel-normal: var(
-    --interactive-normal
-  ); /* channel text color [default: var(--interactive-normal)] */
+    --interactive-text-default
+  ); /* channel text color [default: var(--interactive-text-default)] */
   --channel-muted: var(
     --interactive-muted
   ); /* muted channel text color [default: var(--interactive-muted)] */
   --channel-hover: var(
-    --interactive-hover
-  ); /* hovered channel text color [default: var(--interactive-hover)] */
+    --interactive-text-hover
+  ); /* hovered channel text color [default: var(--interactive-text-hover)] */
   --channel-selected: var(
-    --interactive-active
-  ); /* selected channel text color [default: var(--interactive-active)] */
+    --interactive-text-active
+  ); /* selected channel text color [default: var(--interactive-text-active)] */
   --channel-selected-bg: var(
     --main-color
   ); /* selected channel background [default: var(--main-color)] */
