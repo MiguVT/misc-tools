@@ -1,0 +1,15 @@
+# Night Mode StartUP
+HOUR=$(date +%H)
+MIN=$(date +%M)
+
+# If between 23:30-23:59
+if [ "$HOUR" -eq 23 ] && [ "$MIN" -ge 30 ]; then
+    for led in /sys/class/leds/*/brightness; do echo 0 > "$led"; done
+fi
+
+# If between 00:00-06:59
+if [ "$HOUR" -ge 0 ] && [ "$HOUR" -le 6 ]; then
+    for led in /sys/class/leds/*/brightness; do echo 0 > "$led"; done
+fi
+
+exit 0
