@@ -1,5 +1,5 @@
-# Valve Index HMD — permissions + auto-reboot on plug-in
-# Vendor: 28de (Valve) | HMD: 2300 | Dongles: 2101, 2102
+# Valve Index HMD: permissions + auto-reboot on plug-in
+# Vendor: 28de (Valve) | HMD: 2300
 
 # Permissions: let any user access Valve HID/USB devices (no sudo)
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="28de", MODE="0666", TAG+="uaccess"
